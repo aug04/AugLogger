@@ -15,50 +15,77 @@ namespace AugLogger
         private readonly string _filePath;
         private readonly ReaderWriterLockSlim _locker = new ReaderWriterLockSlim();
         private string _timeFormat;
+        private string _directory;
 
-        private Logger(string type, string timeFormat, string filePath)
+        private Logger(string type, string timeFormat, string filePath, string directory)
         {
             _type = type;
             _timeFormat = !string.IsNullOrEmpty(timeFormat) ? timeFormat : _defaultTimeFormat;
             _filePath = filePath;
+            _directory = directory;
         }
 
-        private static Logger GetLogger(Type type, string timeFormat, string filePath)
+        private static Logger GetLogger(Type type, string timeFormat, string filePath, string directory)
         {
-            return new Logger(type.Name, timeFormat, filePath);
+            return new Logger(type.Name, timeFormat, filePath, directory);
         }
 
         public static Logger GetLogger(Type type)
         {
-            return new Logger(type?.Name, _defaultTimeFormat, null);
+            return new Logger(type?.Name, _defaultTimeFormat, null, null);
         }
 
+        /// <summary>
+        /// Set time format for the logger.
+        /// </summary>
+        /// <param name="timeFormat">DateTime format string in C#, default value is "yyyy-MM-dd HH:mm:ss,fff".</param>
+        /// <returns>The logger instance.</returns>
         public Logger SetTimeFormat(string timeFormat)
         {
             if (!string.IsNullOrEmpty(timeFormat)) _timeFormat = timeFormat;
             return this;
         }
 
+        /// <summary>
+        /// Log the message with information type (INFO tag).
+        /// </summary>
+        /// <param name="message">The text to log to file & console.</param>
         public void Info(string message)
         {
             WriteLog(message, LogType.Info);
         }
 
+        /// <summary>
+        /// Log the message with information type (DEBUG tag).
+        /// </summary>
+        /// <param name="message">The text to log to file & console.</param>
         public void Debug(string message)
         {
             WriteLog(message, LogType.Debug);
         }
 
+        /// <summary>
+        /// Log the message with information type (WARNING tag).
+        /// </summary>
+        /// <param name="message">The text to log to file & console.</param>
         public void Warning(string message)
         {
             WriteLog(message, LogType.Warning);
         }
 
+        /// <summary>
+        /// Log the message with information type (ERROR tag).
+        /// </summary>
+        /// <param name="message">The text to log to file & console.</param>
         public void Error(string message)
         {
             WriteLog(message, LogType.Error);
         }
 
+        /// <summary>
+        /// Log the message with information type (VERBOSE tag).
+        /// </summary>
+        /// <param name="message">The text to log to file & console.</param>
         public void Verbose(string message)
         {
             WriteLog(message, LogType.Verbose);
@@ -118,7 +145,7 @@ namespace AugLogger
                 else
                 {
                     var directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                        Assembly.GetExecutingAssembly().GetName().Name, "Log");
+                        !string.IsNullOrEmpty(_directory) ? _directory : Assembly.GetExecutingAssembly().GetName().Name, "Log");
                     Directory.CreateDirectory(directory);
                     path = Path.Combine(directory, GetLogFileName());
                 }
@@ -151,10 +178,14 @@ namespace AugLogger
             Verbose
         }
 
+        /// <summary>
+        /// This class is used to build a logger instance by chain.
+        /// </summary>
         public class Builder
         {
             private string _filePath;
             private string _timeFormat;
+            private string _directory;
 
             // ReSharper disable once MemberHidesStaticFromOuterClass
             private Type _type;
@@ -163,6 +194,7 @@ namespace AugLogger
             {
                 _timeFormat = _defaultTimeFormat;
                 _filePath = null;
+                _directory = null;
             }
 
             public Builder(Type type)
@@ -170,29 +202,60 @@ namespace AugLogger
                 _type = type;
                 _timeFormat = _defaultTimeFormat;
                 _filePath = null;
+                _directory = null;
             }
 
+            /// <summary>
+            /// Set time format for the logger.
+            /// </summary>
+            /// <param name="timeFormat">DateTime format string in C#, default value is "yyyy-MM-dd HH:mm:ss,fff".</param>
+            /// <returns>The Builder instance allow to chain.</returns>
             public Builder SetTimeFormat(string timeFormat)
             {
                 if (!string.IsNullOrEmpty(timeFormat)) _timeFormat = timeFormat;
                 return this;
             }
 
+            /// <summary>
+            /// The type name is used to filter.
+            /// </summary>
+            /// <param name="type">Any type, normally is class type, example: typeof(ClassName).</param>
+            /// <returns>The Builder instance allow to chain.</returns>
             public Builder SetType(Type type)
             {
                 _type = type;
                 return this;
             }
 
+            /// <summary>
+            /// Set your absolute log file path.
+            /// </summary>
+            /// <param name="filePath">The absolute file path to stored all logged message.</param>
+            /// <returns>The Builder instance allow to chain.</returns>
             public Builder SetFilePath(string filePath)
             {
                 _filePath = filePath;
                 return this;
             }
 
+            /// <summary>
+            /// Set your log directory name.
+            /// </summary>
+            /// <param name="directoryName">The directory name to stored all logged message (normally is project name).</param>
+            /// <returns>The Builder instance allow to chain.</returns>
+            public Builder SetDirectoryName(string directoryName)
+            {
+                _directory = directoryName;
+                return this;
+            }
+
+            /// <summary>
+            /// This method build an instance of the Logger.
+            /// </summary>
+            /// <returns>The instance of the Logger</returns>
             public Logger Build()
             {
-                return GetLogger(_type, _timeFormat, _filePath);
+                return GetLogger(_type, _timeFormat, _filePath, _directory);
             }
         }
     }

@@ -1,12 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net472</TargetFramework><!--netcoreapp3.1;-->
     <Authors>myangelshh@gmail.com</Authors>
     <PackageId>Com.Github.Aug04.AugLogger</PackageId>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Copyright>myangelshh@gmail.com</Copyright>
     <Description>Library to log text to file and console.</Description>
+    <RepositoryUrl>https://github.com/aug04/AugLogger</RepositoryUrl>
+    <PackageTags>Logging, Logger, Loggers, Log, Logs, Text, Console</PackageTags>
+    <Version>1.0.4</Version>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\AugLogger.xml</DocumentationFile>
+    <OutputPath>bin\Debug\</OutputPath>
+    <Optimize>true</Optimize>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
 
 </Project>
