@@ -3,7 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 
-namespace AugLogger
+namespace Aug
 {
     /// <summary>
     /// This class gives you an easy way to write your log in C#.
@@ -11,11 +11,11 @@ namespace AugLogger
     public class Logger
     {
         private static readonly string _defaultTimeFormat = "yyyy-MM-dd HH:mm:ss,fff";
-        private static string _type;
+        private readonly string _type;
         private readonly string _filePath;
         private readonly ReaderWriterLockSlim _locker = new ReaderWriterLockSlim();
         private string _timeFormat;
-        private string _directory;
+        private readonly string _directory;
 
         private Logger(string type, string timeFormat, string filePath, string directory)
         {
@@ -30,6 +30,11 @@ namespace AugLogger
             return new Logger(type.Name, timeFormat, filePath, directory);
         }
 
+        /// <summary>
+        /// Create Logger instance by type.
+        /// </summary>
+        /// <param name="type">Type class (can be null).</param>
+        /// <returns></returns>
         public static Logger GetLogger(Type type)
         {
             return new Logger(type?.Name, _defaultTimeFormat, null, null);
@@ -190,6 +195,9 @@ namespace AugLogger
             // ReSharper disable once MemberHidesStaticFromOuterClass
             private Type _type;
 
+            /// <summary>
+            /// Create Builder instance.
+            /// </summary>
             public Builder()
             {
                 _timeFormat = _defaultTimeFormat;
@@ -197,6 +205,10 @@ namespace AugLogger
                 _directory = null;
             }
 
+            /// <summary>
+            /// Create Builder instance by type.
+            /// </summary>
+            /// <param name="type">Type class.</param>
             public Builder(Type type)
             {
                 _type = type;

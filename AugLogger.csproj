@@ -5,11 +5,14 @@
     <Authors>myangelshh@gmail.com</Authors>
     <PackageId>Com.Github.Aug04.AugLogger</PackageId>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Copyright>myangelshh@gmail.com</Copyright>
+    <Copyright>2020</Copyright>
     <Description>Library to log text to file and console.</Description>
     <RepositoryUrl>https://github.com/aug04/AugLogger</RepositoryUrl>
     <PackageTags>Logging, Logger, Loggers, Log, Logs, Text, Console</PackageTags>
-    <Version>1.0.4</Version>
+    <Version>1.0.5</Version>
+    <RootNamespace>Aug</RootNamespace>
+    <Company />
+    <PackageReleaseNotes>Change namespace, fix override type.</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
